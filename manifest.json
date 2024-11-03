@@ -1,0 +1,10 @@
+{
+	"id": "today-time",
+	"name": "Today Time",
+	"version": "1.0.0",
+	"minAppVersion": "0.15.0",
+	"description": "Met à jour automatiquement une propriété 'today' dans le frontmatter d'une note avec la date et l'heure actuelles.",
+	"author": "Henri Jamet",
+	"authorUrl": "https://www.henri-jamet.com/",
+	"isDesktopOnly": false
+}
