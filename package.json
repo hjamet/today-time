@@ -1,7 +1,7 @@
 {
 	"name": "today-time",
 	"version": "1.0.0",
-	"description": "Met à jour automatiquement une propriété 'today' dans le frontmatter d'une note avec la date et l'heure actuelles.",
+	"description": "Automatically updates a 'today' property in the frontmatter of a note with the current date and time.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",

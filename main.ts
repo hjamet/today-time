@@ -4,11 +4,13 @@ const moment = require('moment');
 interface MyPluginSettings {
 	notePath: string;
 	format: string;
+	updateInterval: number;
 }
 
 const DEFAULT_SETTINGS: MyPluginSettings = {
 	notePath: '',
-	format: 'YYYY-MM-DD HH:mm:ss'
+	format: 'YYYY-MM-DD HH:mm:ss',
+	updateInterval: 60
 }
 
 export default class AutoUpdatePlugin extends Plugin {
@@ -40,7 +42,7 @@ export default class AutoUpdatePlugin extends Plugin {
 
 		this.intervalId = setInterval(() => {
 			this.updateNoteTimestamp();
-		}, 1000);
+		}, this.settings.updateInterval * 1000);
 	}
 
 	stopAutoUpdate() {
@@ -64,7 +66,7 @@ export default class AutoUpdatePlugin extends Plugin {
 			const newContent = this.updateFrontmatter(content, formattedDateTime);
 			await this.app.vault.modify(file, newContent);
 		} catch (error) {
-			console.error('Erreur lors de la mise à jour du timestamp:', error);
+			console.error('Error updating timestamp:', error);
 		}
 	}
 
@@ -133,14 +135,14 @@ class AutoUpdateSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName('Note à mettre à jour')
-			.setDesc('Sélectionnez la note à mettre à jour')
+			.setName('Note to update')
+			.setDesc('Select the note to update')
 			.addText(text => text
-				.setPlaceholder('Cliquez pour sélectionner...')
+				.setPlaceholder('Click to select...')
 				.setValue(this.plugin.settings.notePath)
 				.setDisabled(true))
 			.addButton(button => button
-				.setButtonText('Parcourir')
+				.setButtonText('Browse')
 				.onClick(() => {
 					new FileSelectionModal(this.app, (file) => {
 						this.plugin.settings.notePath = file.path;
@@ -150,8 +152,8 @@ class AutoUpdateSettingTab extends PluginSettingTab {
 				}));
 
 		new Setting(containerEl)
-			.setName('Format de date et heure')
-			.setDesc('Format moment.js (ex: YYYY-MM-DD HH:mm:ss)')
+			.setName('Date and time format')
+			.setDesc('moment.js format (e.g., YYYY-MM-DD HH:mm:ss)')
 			.addText(text => text
 				.setPlaceholder('YYYY-MM-DD HH:mm:ss')
 				.setValue(this.plugin.settings.format)
@@ -159,6 +161,21 @@ class AutoUpdateSettingTab extends PluginSettingTab {
 					if (value.trim() === '') value = DEFAULT_SETTINGS.format;
 					this.plugin.settings.format = value;
 					await this.plugin.saveSettings();
+				}));
+
+		new Setting(containerEl)
+			.setName('Update interval')
+			.setDesc('Update frequency in seconds (minimum: 1)')
+			.addText(text => text
+				.setPlaceholder('60')
+				.setValue(String(this.plugin.settings.updateInterval))
+				.onChange(async (value) => {
+					const numValue = Number(value);
+					if (!isNaN(numValue) && numValue > 0) {
+						this.plugin.settings.updateInterval = numValue;
+						await this.plugin.saveSettings();
+						this.plugin.startAutoUpdate();
+					}
 				}));
 	}
 }

@@ -4,7 +4,7 @@ This plugin automatically updates a `today` property in the frontmatter of a spe
 
 ## Features
 
-- Automatic update every second
+- Customizable update frequency (in seconds)
 - Customizable date/time format (using moment.js syntax)
 - Easy note selection
 - Automatic frontmatter creation if not present
@@ -13,6 +13,7 @@ This plugin automatically updates a `today` property in the frontmatter of a spe
 
 1. Select the note to update in the plugin settings
 2. Customize the date/time format according to your needs (default: YYYY-MM-DD HH:mm:ss)
+3. Set the update frequency in seconds (default: 60 seconds)
 
 ## Format
 
